@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Germinación de la Lenteja y la Cantidad de Agua | Indagación Científica</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Chart.js (Gráficos interactivos) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- Three.js (r128, build global: THREE, OrbitControls, GLTFLoader) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/meshopt_decoder.js"></script>
+
+    <!-- Hoja de estilos -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- =====================================================================
+         FONDO AMBIENTAL: partículas de agua y naturaleza + resplandores
+    ====================================================================== -->
+    <canvas id="bgCanvas"></canvas>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <!-- =====================================================================
+         BARRA SUPERIOR (marca, progreso, tema y pantalla completa)
+    ====================================================================== -->
+    <header class="topbar" id="topbar">
+        <div class="brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 20h10"/>
+                    <path d="M10 20c5.5-2.5.8-6.4 3-10"/>
+                    <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/>
+                    <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <span class="brand-title">Indagación: Lens culinaris</span>
+                <span class="brand-sub" id="headerSlideLabel">01 / 07 — Portada</span>
+            </div>
+        </div>
+
+        <nav class="dots" id="slideDotsNav" aria-label="Progreso de diapositivas"></nav>
+
+        <div class="topbar-actions">
+            <button id="overviewBtn" class="icon-btn" title="Vista general de diapositivas (Tecla G)" aria-label="Vista general de diapositivas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+                </svg>
+            </button>
+            <button id="themeToggleBtn" class="icon-btn" title="Cambiar tema claro / oscuro" aria-label="Cambiar tema">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                </svg>
+            </button>
+            <button id="fullscreenBtn" class="icon-btn" title="Pantalla completa (Tecla F)" aria-label="Pantalla completa">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- =====================================================================
+         FLECHAS DE NAVEGACIÓN GIGANTES
+    ====================================================================== -->
+    <button id="prevBtn" class="nav-arrow prev" aria-label="Diapositiva anterior">&#10216;</button>
+    <button id="nextBtn" class="nav-arrow next" aria-label="Diapositiva siguiente">&#10217;</button>
+
+    <!-- =====================================================================
+         ESCENARIO PRINCIPAL DE DIAPOSITIVAS
+    ====================================================================== -->
+    <main class="slide-viewport">
+        <div class="slide-container" id="slidesContainer">
+
+            <!-- =============================================================
+                 DIAPOSITIVA 1: PORTADA
+            ============================================================== -->
+            <section class="slide is-active" data-title="Portada">
+                <div class="slide-inner portada-grid">
+                    <div class="portada-left">
+                        <span class="eyebrow stagger"><span class="ping"></span> Indagación Científica Experimental</span>
+                        <h1 class="hero-title stagger">
+                            La Germinación de la <span class="grad grad--green">Lenteja</span> y la Cantidad de <span class="grad grad--water">Agua</span>
+                        </h1>
+                        <p class="hero-sub stagger">Indagación Científica sobre el impacto del riego</p>
+
+                        <div class="author-card stagger">
+                            <span class="author-label">Presentado por:</span>
+                            <div id="presenterName" contenteditable="true" spellcheck="false">Alanya Gonzales, Paola Estefany</div>
+                        </div>
+
+                        <div class="portada-cta stagger">
+                            <button class="btn btn-primary" onclick="goToSlide(1)">Iniciar Exposición <span>&rarr;</span></button>
+                            <span class="hint">Usa <kbd>&larr;</kbd> <kbd>&rarr;</kbd> o desliza para navegar</span>
+                        </div>
+                    </div>
+
+                    <div class="portada-right stagger">
+                        <div class="visor-3d" id="visor3DPortada"></div>
+                        <p class="visor-caption">Modelo 3D · Brote óptimo (15 ml)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============================================================
+                 DIAPOSITIVA 2: PREGUNTA E HIPÓTESIS
+            ============================================================== -->
+            <section class="slide" data-title="Pregunta e Hipótesis">
+                <div class="slide-inner slide-inner--narrow">
+                    <div class="section-head stagger">
+                        <span class="eyebrow">02 · Planteamiento del Problema</span>
+                        <h2 class="section-title">Pregunta de Indagación e Hipótesis</h2>
+                    </div>
+
+                    <div class="card card--question stagger" id="questionCard">
+                        <div class="card-badge">?</div>
+                        <div class="card-body">
+                            <span class="card-label">Pregunta de Indagación</span>
+                            <p class="card-text">¿Cómo influye la cantidad de agua en la germinación de las semillas de lenteja?</p>
+                        </div>
+                    </div>
+
+                    <div class="contrast-bar stagger">
+                        <span class="contrast-line"></span>
+                        <button class="contrast-btn" id="contrastBtn" onclick="toggleContrast()">Contrastar &#8644;</button>
+                        <span class="contrast-line"></span>
+                    </div>
+
+                    <div class="card card--hypothesis stagger" id="hypothesisCard">
+                        <div class="card-badge">&#9878;</div>
+                        <div class="card-body">
+                            <span class="card-label">Hipótesis Científica</span>
+                            <p class="card-text">
+                                Si las semilals de lenteja reciben una cantidad de agua adecuada, entonces la germinación y el crecimiento serán óptimos, mientras que cantidades insuficientes o excesivas limitarán su desarrollo.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============================================================
+                 DIAPOSITIVA 3: VARIABLES (INTERACTIVA CON 3D)
+            ============================================================== -->
+            <section class="slide" data-title="Variables">
+                <div class="slide-inner slide-inner--wide">
+                    <div class="variables-grid">
+                        <!-- Columna izquierda: título + variables + botellas -->
+                        <div class="variables-left">
+                            <div class="section-head stagger">
+                                <span class="eyebrow">03 · Diseño Experimental</span>
+                                <h2 class="section-title">Variables de la Indagación</h2>
+                            </div>
+                            <div class="var-card stagger">
+                                <h3 class="var-title"><span class="var-chip chip--cause">Causa</span> Variable Independiente</h3>
+                                <p class="var-text">Cantidad de agua suministrada diariamente.</p>
+                            </div>
+                            <div class="var-card stagger">
+                                <h3 class="var-title"><span class="var-chip chip--effect">Efecto</span> Variable Dependiente</h3>
+                                <p class="var-text">La germinacion de las semillas.</p>
+                            </div>
+
+                            <div class="bottle-row stagger">
+                                <button class="bottle-btn is-selected" data-ml="5" onclick="selectBottle(5)">
+                                    <span class="bottle-icon">&#129380;</span>
+                                    <span class="bottle-ml">5 ml</span>
+                                    <span class="bottle-name">Botella 5 ml</span>
+                                </button>
+                                <button class="bottle-btn" data-ml="10" onclick="selectBottle(10)">
+                                    <span class="bottle-icon">&#129380;</span>
+                                    <span class="bottle-ml">10 ml</span>
+                                    <span class="bottle-name">Botella 10 ml</span>
+                                </button>
+                                <button class="bottle-btn" data-ml="15" onclick="selectBottle(15)">
+                                    <span class="bottle-icon">&#129380;</span>
+                                    <span class="bottle-ml">15 ml</span>
+                                    <span class="bottle-name">Botella 15 ml</span>
+                                </button>
+                            </div>
+
+                            <div class="controls-row stagger">
+                                <h3 class="var-title"><span class="var-chip chip--control">Control</span> Variables de Control</h3>
+                                <div class="control-chips">
+                                    <span class="control-chip">&#127807; Tipo de semilla</span>
+                                    <span class="control-chip">&#129525; El recipiente</span>
+                                    <span class="control-chip">&#9728; Luz</span>
+                                    <span class="control-chip">&#127777; Temperatura</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Columna derecha: visor 3D + datos en tiempo real -->
+                        <div class="variables-right stagger">
+                            <div class="visor-3d visor-3d--tall" id="visor3DVariables"></div>
+                            <div class="data-panel">
+                                <div class="data-item"><span class="data-label">Tratamiento</span><span class="data-value" id="dataMl">5 ml</span></div>
+                                <div class="data-item"><span class="data-label">Germinación</span><span class="data-value" id="dataGerm">30%</span></div>
+                                <div class="data-item"><span class="data-label">Longitud máx.</span><span class="data-value" id="dataLen">1.5 cm</span></div>
+                                <div class="data-item data-item--full"><span class="data-label">Estado</span><span class="data-value" id="dataStatus">Crecimiento lento</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============================================================
+                 DIAPOSITIVA 4: RESULTADOS (Chart.js)
+            ============================================================== -->
+            <section class="slide" data-title="Resultados">
+                <div class="slide-inner slide-inner--wide">
+                    <div class="results-head stagger">
+                        <div>
+                            <span class="eyebrow">04 · Registro Empírico (Día 7)</span>
+                            <h2 class="section-title">Resultados Experimentales</h2>
+                        </div>
+                        <button class="btn btn-ghost" id="toggleDataViewBtn" onclick="toggleDataView()">
+                            Ver Tabla de Datos
+                        </button>
+                    </div>
+
+                    <div id="chartsView" class="chart-grid">
+                        <div class="chart-box stagger">
+                            <div class="chart-head">
+                                <span class="chart-badge">Gráfico 1</span>
+                                <h3 class="chart-title">Crecimiento del brote (cm) · Días 1-7</h3>
+                            </div>
+                            <div class="chart-canvas"><canvas id="growthChart"></canvas></div>
+                        </div>
+                        <div class="chart-box stagger">
+                            <div class="chart-head">
+                                <span class="chart-badge">Gráfico 2</span>
+                                <h3 class="chart-title">% de Germinación · Día 7</h3>
+                            </div>
+                            <div class="chart-canvas"><canvas id="germinationChart"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div id="tableView" class="table-view hidden">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tratamiento</th>
+                                    <th>% Germinación</th>
+                                    <th>Día 1</th>
+                                    <th>Día 3</th>
+                                    <th>Día 5</th>
+                                    <th>Día 7 (cm)</th>
+                                    <th>Observación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>5 ml</strong></td>
+                                    <td>30%</td>
+                                    <td>0.0</td><td>0.2</td><td>0.7</td>
+                                    <td><strong>1.5 cm</strong></td>
+                                    <td>Crecimiento lento, raíces incipientes.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>10 ml</strong></td>
+                                    <td>75%</td>
+                                    <td>0.0</td><td>0.8</td><td>2.8</td>
+                                    <td><strong>5.0 cm</strong></td>
+                                    <td>Desarrollo intermedio y más lento.</td>
+                                </tr>
+                                <tr class="row-best">
+                                    <td><strong>15 ml</strong> &#9733;</td>
+                                    <td><strong>100%</strong></td>
+                                    <td>0.0</td><td>2.2</td><td>7.0</td>
+                                    <td><strong>12.0 cm</strong></td>
+                                    <td>Óptimo: tallo vigoroso y raíces extensas.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============================================================
+                 DIAPOSITIVA 5: ANÁLISIS
+            ============================================================== -->
+            <section class="slide" data-title="Análisis">
+                <div class="slide-inner slide-inner--wide">
+                    <div class="section-head stagger">
+                        <span class="eyebrow">05 · Procesamiento de Evidencia</span>
+                        <h2 class="section-title">Análisis de Datos y Contrastación</h2>
+                    </div>
+
+                    <div class="analysis-grid">
+                        <div class="card stagger">
+                            <h3 class="card-title">Interpretación de Patrones</h3>
+                            <ul class="analysis-list">
+                                <li><strong>15 ml</strong> — acelera el metabolismo celular permitiendo que el <strong>100%</strong> de las semillas germinen y alcancen su longitud máxima.</li>
+                                <li><strong>10 ml</strong> — el desarrollo es intermedio y lento.</li>
+                                <li><strong>5 ml</strong> — el agua es insuficiente para romper el estado de latencia de la mayoría de semillas.</li>
+                            </ul>
+                        </div>
+
+                        <div class="card stagger">
+                            <h3 class="card-title">Contrastación de Hipótesis</h3>
+                            <p class="card-text">La hipótesis es <strong>ACEPTADA</strong>. Los datos demuestran que a mayor volumen de agua dentro del rango óptimo (hasta 15 ml), mayor es el desarrollo biológico.</p>
+                            <div class="verdict">&#10003; Hipótesis Aceptada</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============================================================
+                 DIAPOSITIVA 6: SUSTENTACIÓN CIENTÍFICA (célula vegetal 3D)
+            ============================================================== -->
+            <section class="slide" data-title="Sustentación Científica">
+                <div class="slide-inner slide-inner--wide">
+                    <div class="section-head stagger">
+                        <span class="eyebrow">06 · Fundamento Biológico y Celular</span>
+                        <h2 class="section-title">Sustentación Científica</h2>
+                    </div>
+
+                    <div class="science-grid">
+                        <div class="science-visual stagger">
+                            <div class="visor-3d visor-3d--tall" id="visor3DCelula">
+                                <div class="visor-badge" id="cellBadge">Pared celular: absorción inicial de H₂O y activación de enzimas</div>
+                            </div>
+                            <p class="visor-caption">Célula vegetal 3D · Gira con el dedo o el ratón</p>
+                        </div>
+
+                        <div class="science-content stagger">
+                            <div class="tabs" id="scienceTabs">
+                                <button class="tab is-selected" data-sci="0" onclick="selectScienceTab(0)">1 · Imbibición</button>
+                                <button class="tab" data-sci="1" onclick="selectScienceTab(1)">2 · Presión de Turgencia</button>
+                                <button class="tab" data-sci="2" onclick="selectScienceTab(2)">3 · Diferenciación celular</button>
+                            </div>
+
+                            <div class="tab-panel" id="sciencePanel">
+                                <h3 class="tab-panel-title">Imbibición y Activación Enzimática</h3>
+                                <p class="tab-panel-text">El agua entra en la semilla a través de la testa y el micrópilo, hidratando el embrión y activando las enzimas (como la α-amilasa) que convierten el almidón de los cotiledones en energía disponible para el brote.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============================================================
+                 DIAPOSITIVA 7: CONCLUSIONES
+            ============================================================== -->
+            <section class="slide" data-title="Conclusiones">
+                <div class="slide-inner slide-inner--narrow">
+                    <div class="section-head section-head--center stagger">
+                        <span class="eyebrow">07 · Cierre de Indagación</span>
+                        <h2 class="section-title">Conclusiones del Experimento</h2>
+                        <p class="hero-sub">Toca cada tarjeta para revelarla</p>
+                    </div>
+
+                    <div class="conclusion-grid">
+                        <button class="reveal-card stagger" onclick="this.classList.toggle('revealed')">
+                            <span class="reveal-num">1</span>
+                            <div class="reveal-body">
+                                <h3>El agua es un factor determinante</h3>
+                                <p>La cantidad de agua es un factor determinante y limitante en la germinación de la lenteja.</p>
+                            </div>
+                        </button>
+                        <button class="reveal-card stagger" onclick="this.classList.toggle('revealed')">
+                            <span class="reveal-num">2</span>
+                            <div class="reveal-body">
+                                <h3>15 ml es la dosis óptima</h3>
+                                <p>15 ml diarios demostraron ser la dosis óptima para un crecimiento rápido, sano y vigoroso en 7 días.</p>
+                            </div>
+                        </button>
+                        <button class="reveal-card stagger" onclick="this.classList.toggle('revealed')">
+                            <span class="reveal-num">3</span>
+                            <div class="reveal-body">
+                                <h3>5 ml y 10 ml limitan el desarrollo</h3>
+                                <p>Los tratamientos de 5 ml y 10 ml limitan notablemente el desarrollo radicular y aéreo de la planta.</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- =====================================================================
+         BARRA INFERIOR (planta de progreso + barra de avance + contador)
+    ====================================================================== -->
+    <footer class="bottombar" id="bottombar">
+        <div class="growth">
+            <span class="growth-icon" id="growthStageIcon"></span>
+            <span class="growth-text" id="growthStageText">Fase: Semilla en reposo</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressBarFill"></div>
+        </div>
+        <span class="slide-counter" id="slideCounter">01 / 07</span>
+    </footer>
+
+    <!-- Botón para salir del modo enfoque -->
+    <button id="exitFocusBtn" class="exit-focus" onclick="toggleFocusMode(false)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>
+        </svg>
+        <span>Salir de Modo Enfoque (Esc)</span>
+    </button>
+
+    <!-- Notificación -->
+    <div id="toastBox" class="toast"></div>
+
+    <!-- Vista general de diapositivas (salto directo a cualquier hoja) -->
+    <div id="overviewModal" class="overview-modal">
+        <div class="overview-panel">
+            <div class="overview-head">
+                <div>
+                    <h3>Vista General de Diapositivas</h3>
+                    <p>Haz clic en una hoja para saltar directamente</p>
+                </div>
+                <button id="closeOverviewBtn" class="icon-btn" title="Cerrar" aria-label="Cerrar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <div id="overviewGrid" class="overview-grid"></div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         SCRIPTS
+         js/charts.js → Gráficos interactivos (Chart.js)
+         js/app.js    → Lógica de presentación + visores 3D (Three.js)
+    ====================================================================== -->
+    <script src="js/charts.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

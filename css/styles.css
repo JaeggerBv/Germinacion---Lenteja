@@ -1,0 +1,1641 @@
+/* =============================================================================
+   styles.css — Diseño inmersivo, responsivo y adaptado a pantallas grandes
+   Indagación: "La Germinación de la Lenteja y la Cantidad de Agua"
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. VARIABLES DE TEMA (claro por defecto, oscuro con html.dark)
+--------------------------------------------------------------------------- */
+:root {
+    --verde-oscuro: #2E7D32;
+    --verde: #4CAF50;
+    --verde-brillante: #34d399;
+    --azul-agua: #0288D1;
+    --azul-agua-brillante: #38bdf8;
+    --verde-oliva: #8c9e2d;
+
+    --bg: #eef6ef;
+    --bg-2: #e2f0e6;
+    --text: #10241a;
+    --text-muted: #4a6b58;
+    --text-soft: #5f7d6c;
+
+    --glass: rgba(255, 255, 255, 0.72);
+    --glass-strong: rgba(255, 255, 255, 0.88);
+    --glass-border: rgba(46, 125, 50, 0.16);
+    --card: rgba(255, 255, 255, 0.78);
+    --chip: rgba(46, 125, 50, 0.10);
+
+    --accent: var(--verde);
+    --accent-strong: var(--verde-oscuro);
+    --accent-glow: rgba(76, 175, 80, 0.35);
+
+    --shadow: 0 18px 50px -20px rgba(16, 36, 26, 0.45);
+    --shadow-soft: 0 8px 30px -14px rgba(16, 36, 26, 0.35);
+
+    --header-h: 66px;
+    --footer-h: 54px;
+
+    --ease-hero: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+html.dark {
+    --bg: #04140e;
+    --bg-2: #061c13;
+    --text: #ecfdf5;
+    --text-muted: #a7d7c0;
+    --text-soft: #8fc0a9;
+
+    --glass: rgba(7, 34, 24, 0.62);
+    --glass-strong: rgba(7, 34, 24, 0.82);
+    --glass-border: rgba(52, 211, 153, 0.16);
+    --card: rgba(7, 34, 24, 0.66);
+    --chip: rgba(52, 211, 153, 0.10);
+
+    --accent: var(--verde-brillante);
+    --accent-strong: #6ee7b7;
+    --accent-glow: rgba(52, 211, 153, 0.35);
+
+    --shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.75);
+    --shadow-soft: 0 8px 30px -14px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------------------------------------------------------------------------
+   2. RESET Y BASE
+--------------------------------------------------------------------------- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.6s ease, color 0.6s ease;
+}
+
+[contenteditable="true"] {
+    user-select: text;
+}
+
+h1, h2, h3, .hero-title, .section-title {
+    font-family: 'Outfit', sans-serif;
+}
+
+strong {
+    color: var(--accent-strong);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+   3. FONDO AMBIENTAL (canvas de partículas + resplandores)
+--------------------------------------------------------------------------- */
+#bgCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.75;
+}
+
+.glow {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 1s ease;
+}
+
+.glow-1 {
+    top: -120px;
+    left: -120px;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, var(--accent-glow), transparent 70%);
+}
+
+.glow-2 {
+    bottom: -120px;
+    right: -120px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.28), transparent 70%);
+}
+
+/* ---------------------------------------------------------------------------
+   4. BARRA SUPERIOR
+--------------------------------------------------------------------------- */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-h);
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 20px;
+    background: var(--glass);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--glass-border);
+    transition: transform 0.4s var(--ease-hero), background 0.6s ease;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: linear-gradient(135deg, var(--verde), var(--verde-oscuro));
+    box-shadow: 0 8px 20px -6px var(--accent-glow);
+}
+
+.brand-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.brand-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.brand-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.dots {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--chip);
+    border: 1px solid var(--glass-border);
+}
+
+.slide-dot {
+    height: 10px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background: var(--glass-border);
+    transition: width 0.35s var(--ease-hero), background 0.35s ease;
+}
+
+.slide-dot.active {
+    width: 26px;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--glass-border);
+    background: var(--chip);
+    color: var(--text);
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.icon-btn:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+.icon-btn:active {
+    transform: scale(0.92);
+}
+
+.icon-btn svg {
+    width: 19px;
+    height: 19px;
+}
+
+/* Sol visible en oscuro, luna visible en claro */
+html.dark .icon-sun { display: block; }
+html.dark .icon-moon { display: none; }
+html:not(.dark) .icon-sun { display: none; }
+html:not(.dark) .icon-moon { display: block; }
+
+/* ---------------------------------------------------------------------------
+   5. FLECHAS DE NAVEGACIÓN GIGANTES
+--------------------------------------------------------------------------- */
+.nav-arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 30;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    display: grid;
+    place-items: center;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--text);
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, opacity 0.3s ease;
+}
+
+.nav-arrow:hover {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 28px var(--accent-glow);
+}
+
+.nav-arrow:active {
+    transform: translateY(-50%) scale(0.92);
+}
+
+.nav-arrow.prev { left: 18px; }
+.nav-arrow.next { right: 18px; }
+
+.nav-arrow:disabled {
+    opacity: 0.22;
+    pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   6. ESCENARIO Y DIAPOSITIVAS (transición Hero horizontal)
+--------------------------------------------------------------------------- */
+.slide-viewport {
+    position: fixed;
+    top: var(--header-h);
+    bottom: var(--footer-h);
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: 5;
+    transition: top 0.4s var(--ease-hero), bottom 0.4s var(--ease-hero);
+}
+
+.slide-container {
+    display: flex;
+    height: 100%;
+    will-change: transform;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.slide {
+    flex: 0 0 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    padding: 28px clamp(28px, 6vw, 96px) 40px;
+}
+
+.slide-inner {
+    width: 100%;
+    max-width: 1240px;
+    /* Centrado vertical "seguro": centra cuando hay espacio disponible
+       y se alinea arriba (sin recortar el título) cuando el contenido desborda */
+    margin: auto;
+}
+
+.slide-inner--narrow { max-width: 900px; }
+.slide-inner--wide { max-width: 1280px; }
+
+/* Scrollbar sutil */
+.slide::-webkit-scrollbar { width: 6px; }
+.slide::-webkit-scrollbar-track { background: transparent; }
+.slide::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 999px; }
+
+/* ---------------------------------------------------------------------------
+   7. ENCABEZADOS DE SECCIÓN Y ELEMENTOS COMUNES
+--------------------------------------------------------------------------- */
+.section-head {
+    margin-bottom: 16px;
+}
+
+.section-head--center {
+    text-align: center;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    background: var(--chip);
+    border: 1px solid var(--glass-border);
+}
+
+.eyebrow .ping {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 var(--accent-glow);
+    animation: ping 1.8s infinite;
+}
+
+@keyframes ping {
+    0% { box-shadow: 0 0 0 0 var(--accent-glow); }
+    70% { box-shadow: 0 0 0 9px rgba(0, 0, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+}
+
+.section-title {
+    font-weight: 800;
+    font-size: clamp(26px, 3.4vw, 42px);
+    line-height: 1.12;
+    margin-top: 10px;
+    letter-spacing: -0.01em;
+}
+
+/* ---------------------------------------------------------------------------
+   8. BOTONES
+--------------------------------------------------------------------------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 26px;
+    border-radius: 16px;
+    border: 1px solid transparent;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn:active { transform: scale(0.96); }
+
+.btn-primary {
+    color: #fff;
+    background: linear-gradient(135deg, var(--verde), var(--verde-oscuro));
+    box-shadow: 0 14px 34px -12px var(--accent-glow);
+}
+
+.btn-primary:hover {
+    box-shadow: 0 18px 44px -12px var(--accent-glow);
+}
+
+.btn-ghost {
+    color: var(--accent-strong);
+    background: var(--chip);
+    border-color: var(--glass-border);
+}
+
+.btn-ghost:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+   9. PORTADA
+--------------------------------------------------------------------------- */
+.portada-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+}
+
+.hero-title {
+    font-weight: 900;
+    font-size: clamp(34px, 5.4vw, 68px);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 22px 0 14px;
+}
+
+.grad {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.grad--green {
+    background-image: linear-gradient(120deg, var(--verde-brillante), var(--verde), var(--azul-agua-brillante));
+}
+
+.grad--water {
+    background-image: linear-gradient(120deg, var(--azul-agua-brillante), var(--azul-agua));
+}
+
+.hero-sub {
+    font-size: clamp(15px, 1.5vw, 19px);
+    color: var(--text-muted);
+    max-width: 560px;
+}
+
+.author-card {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 26px;
+    padding: 14px 20px;
+    border-radius: 18px;
+    background: var(--card);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+}
+
+.author-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
+#presenterName {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    min-width: 220px;
+    outline: none;
+    border-radius: 8px;
+    padding: 2px 6px;
+}
+
+#presenterName:focus {
+    box-shadow: 0 0 0 2px var(--accent);
+}
+
+.portada-cta {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 26px;
+    flex-wrap: wrap;
+}
+
+.hint {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+kbd {
+    padding: 4px 8px;
+    border-radius: 7px;
+    background: var(--chip);
+    border: 1px solid var(--glass-border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+}
+
+.portada-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Visor de la portada: más alto para aprovechar el espacio vertical del brote */
+#visor3DPortada {
+    min-height: clamp(460px, calc(100vh - 210px), 800px);
+}
+
+.visor-caption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-soft);
+    text-align: center;
+}
+
+/* ---------------------------------------------------------------------------
+   10. TARJETAS Y CONTRASTACIÓN (Diapositiva 2)
+--------------------------------------------------------------------------- */
+.card {
+    border-radius: 24px;
+    padding: 26px 28px;
+    background: var(--card);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card--question {
+    border-left: 5px solid var(--azul-agua);
+}
+
+.card--hypothesis {
+    border-left: 5px solid var(--verde);
+}
+
+.card.contrast-focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow);
+    transform: translateY(-2px);
+}
+
+.card-badge {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    font-size: 26px;
+    color: #fff;
+    box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.5);
+}
+
+.card--question .card-badge {
+    background: linear-gradient(135deg, var(--azul-agua-brillante), var(--azul-agua));
+}
+
+.card--hypothesis .card-badge {
+    background: linear-gradient(135deg, var(--verde-brillante), var(--verde));
+}
+
+.card-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.card-text {
+    margin-top: 6px;
+    font-size: clamp(15px, 1.6vw, 19px);
+    line-height: 1.5;
+    color: var(--text);
+}
+
+.card--hypothesis .card-text {
+    font-size: clamp(14px, 1.4vw, 17px);
+}
+
+.card-title {
+    font-weight: 800;
+    font-size: 21px;
+    margin-bottom: 12px;
+}
+
+.contrast-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.contrast-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+}
+
+.contrast-btn {
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--glass-border);
+    background: var(--chip);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.contrast-btn:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+/* ---------------------------------------------------------------------------
+   11. VARIABLES + VISOR 3D (Diapositiva 3)
+--------------------------------------------------------------------------- */
+.variables-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 30px;
+    align-items: stretch;
+}
+
+/* Columna izquierda: título + variables en un grupo compacto centrado verticalmente */
+.variables-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+}
+
+.variables-left .section-head {
+    margin-bottom: 0;
+}
+
+.var-card {
+    border-radius: 18px;
+    padding: 18px 20px;
+    background: var(--card);
+    border: 1px solid var(--glass-border);
+}
+
+.var-title {
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.var-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 4px 9px;
+    border-radius: 999px;
+    color: #fff;
+}
+
+.chip--cause { background: var(--azul-agua); }
+.chip--effect { background: var(--verde); }
+.chip--control { background: var(--verde-oliva); }
+
+.var-text {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.bottle-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.bottle-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 16px 10px;
+    border-radius: 18px;
+    border: 2px solid var(--glass-border);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.bottle-btn:hover {
+    transform: translateY(-3px);
+}
+
+.bottle-btn.is-selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.bottle-icon {
+    font-size: 30px;
+}
+
+.bottle-ml {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.bottle-name {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.controls-row {
+    border-radius: 18px;
+    padding: 18px 20px;
+    background: var(--card);
+    border: 1px solid var(--glass-border);
+}
+
+.control-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.control-chip {
+    font-size: 12px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: var(--chip);
+    border: 1px solid var(--glass-border);
+}
+
+.variables-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.data-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.data-item {
+    border-radius: 14px;
+    padding: 12px 16px;
+    background: var(--card);
+    border: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.data-item--full {
+    grid-column: 1 / -1;
+}
+
+.data-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.data-value {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--accent-strong);
+}
+
+/* ---------------------------------------------------------------------------
+   12. RESULTADOS / GRÁFICOS (Diapositiva 4)
+--------------------------------------------------------------------------- */
+.results-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.chart-box {
+    border-radius: 22px;
+    padding: 20px;
+    background: var(--card);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+}
+
+.chart-head {
+    margin-bottom: 14px;
+}
+
+.chart-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--chip);
+    border: 1px solid var(--glass-border);
+    color: var(--accent-strong);
+    margin-bottom: 8px;
+}
+
+.chart-title {
+    font-weight: 700;
+    font-size: 17px;
+}
+
+.chart-canvas {
+    position: relative;
+    height: 340px;
+}
+
+.table-view {
+    margin-top: 22px;
+    border-radius: 22px;
+    padding: 8px;
+    background: var(--card);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 13px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.data-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table .row-best {
+    background: var(--chip);
+}
+
+/* ---------------------------------------------------------------------------
+   13. ANÁLISIS (Diapositiva 5)
+--------------------------------------------------------------------------- */
+.analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.analysis-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.analysis-list li {
+    padding: 13px 16px;
+    border-radius: 14px;
+    background: var(--chip);
+    border: 1px solid var(--glass-border);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+
+.verdict {
+    margin-top: 18px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    text-align: center;
+    background: linear-gradient(135deg, var(--verde-brillante), var(--verde));
+    box-shadow: 0 14px 34px -12px var(--accent-glow);
+}
+
+/* ---------------------------------------------------------------------------
+   14. SUSTENTACIÓN CIENTÍFICA (Diapositiva 6)
+--------------------------------------------------------------------------- */
+.science-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 28px;
+    align-items: start;
+}
+
+.science-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.tab {
+    text-align: left;
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 2px solid var(--glass-border);
+    background: var(--card);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+
+.tab:hover {
+    border-color: var(--accent);
+}
+
+.tab.is-selected {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.tab-panel {
+    border-radius: 20px;
+    padding: 22px 24px;
+    background: var(--card);
+    border: 1px solid var(--glass-border);
+    min-height: 170px;
+}
+
+.tab-panel-title {
+    font-weight: 800;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.tab-panel-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   15. CONCLUSIONES (Diapositiva 7)
+--------------------------------------------------------------------------- */
+.conclusion-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 8px;
+}
+
+.reveal-card {
+    border: 2px solid var(--glass-border);
+    border-radius: 22px;
+    padding: 22px;
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.reveal-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+}
+
+.reveal-card.revealed {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.reveal-num {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 20px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--verde-brillante), var(--verde));
+}
+
+.reveal-body h3 {
+    font-weight: 800;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.reveal-body p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.45s var(--ease-hero), opacity 0.45s ease;
+}
+
+.reveal-card.revealed .reveal-body p {
+    max-height: 180px;
+    opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   16. BARRA INFERIOR
+--------------------------------------------------------------------------- */
+.bottombar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--footer-h);
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 20px;
+    background: var(--glass);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid var(--glass-border);
+    transition: transform 0.4s var(--ease-hero);
+}
+
+.growth {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex: none;
+}
+
+.growth-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: var(--chip);
+    color: var(--accent);
+}
+
+.growth-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.growth-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.progress-track {
+    flex: 1;
+    max-width: 560px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--chip);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--verde-brillante), var(--azul-agua-brillante));
+    transition: width 0.5s var(--ease-hero);
+}
+
+.slide-counter {
+    flex: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 13px;
+}
+
+/* ---------------------------------------------------------------------------
+   17. VISOR 3D, CARGA Y FALLBACK
+--------------------------------------------------------------------------- */
+.visor-3d {
+    position: relative;
+    width: 100%;
+    min-height: 340px;
+    border-radius: 26px;
+    overflow: hidden;
+    background:
+        radial-gradient(120% 120% at 50% 0%, var(--chip), transparent 60%),
+        var(--glass);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+}
+
+.visor-3d--tall {
+    min-height: 380px;
+}
+
+/* Visores de Variables (D3) y Célula (D6): más grandes para lucir el modelo */
+#visor3DVariables {
+    min-height: clamp(340px, calc(100vh - 470px), 620px);
+}
+
+#visor3DCelula {
+    min-height: clamp(440px, calc(100vh - 300px), 740px);
+}
+
+.visor-3d canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 26px;
+}
+
+.visor-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+    z-index: 3;
+}
+
+.visor-loading-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 14px var(--accent-glow);
+    animation: load-bounce 1s infinite ease-in-out;
+}
+
+@keyframes load-bounce {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(-9px); opacity: 0.45; }
+}
+
+.visor-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.visor-fallback svg {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+}
+
+/* Etiqueta flotante dentro del visor 3D (zona activa según el botón) */
+.visor-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 6;
+    max-width: calc(100% - 28px);
+    padding: 9px 14px;
+    border-radius: 12px;
+    background: var(--glass-strong);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text);
+    pointer-events: none;
+}
+
+/* Animaciones del SVG de fallback */
+.fb-sway {
+    transform-origin: 50% 90%;
+    animation: fb-sway 4s ease-in-out infinite;
+}
+
+.fb-grow {
+    transform-origin: 50% 100%;
+    animation: fb-grow 5s ease-in-out infinite;
+}
+
+.fb-drop {
+    animation: fb-drop 2.4s ease-in infinite;
+}
+
+.fb-pulse {
+    animation: fb-pulse 3s ease-in-out infinite;
+}
+
+.fb-float {
+    animation: fb-float 6s ease-in-out infinite;
+}
+
+@keyframes fb-sway {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+}
+
+@keyframes fb-grow {
+    0%, 100% { transform: scaleY(0.94); }
+    50% { transform: scaleY(1.05); }
+}
+
+@keyframes fb-drop {
+    0% { transform: translateY(-8px); opacity: 0; }
+    30% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(22px); opacity: 0; }
+}
+
+@keyframes fb-pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+}
+
+@keyframes fb-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* ---------------------------------------------------------------------------
+   18. STAGGER (entrada escalonada al activar la diapositiva)
+--------------------------------------------------------------------------- */
+.slide .stagger {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.6s var(--ease-hero), transform 0.6s var(--ease-hero);
+    transition-delay: calc(var(--i, 0) * 85ms + 60ms);
+}
+
+.slide.is-active .stagger {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ---------------------------------------------------------------------------
+   19. MODO ENFOQUE / PANTALLA COMPLETA
+--------------------------------------------------------------------------- */
+body.focus-mode .topbar { transform: translateY(-100%); }
+body.focus-mode .bottombar { transform: translateY(100%); }
+body.focus-mode .slide-viewport { top: 0; bottom: 0; }
+
+.exit-focus {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 50;
+    display: none;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-strong);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.exit-focus svg { width: 16px; height: 16px; }
+
+body.focus-mode .exit-focus { display: flex; }
+
+/* ---------------------------------------------------------------------------
+   20. TOAST
+--------------------------------------------------------------------------- */
+.toast {
+    position: fixed;
+    bottom: calc(var(--footer-h) + 16px);
+    right: 22px;
+    z-index: 50;
+    padding: 12px 18px;
+    border-radius: 14px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ---------------------------------------------------------------------------
+   20.1 VISTA GENERAL DE DIAPOSITIVAS (overlay de salto)
+--------------------------------------------------------------------------- */
+.overview-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(2, 10, 6, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.overview-modal.open {
+    display: flex;
+}
+
+.overview-panel {
+    width: 100%;
+    max-width: 940px;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.overview-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.overview-head h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.overview-head p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    padding: 22px 24px;
+    overflow-y: auto;
+}
+
+.overview-card {
+    text-align: left;
+    border-radius: 16px;
+    padding: 16px;
+    border: 2px solid var(--glass-border);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.overview-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+}
+
+.overview-card.current {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.ov-num {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--chip);
+    border: 1px solid var(--glass-border);
+    color: var(--accent-strong);
+    margin-bottom: 10px;
+}
+
+.ov-title {
+    display: block;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+/* ---------------------------------------------------------------------------
+   21. RESPONSIVO
+--------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+    .portada-grid,
+    .variables-grid,
+    .analysis-grid,
+    .science-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .conclusion-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .slide {
+        padding: 22px 26px 32px;
+        align-items: flex-start;
+    }
+
+    .slide-inner {
+        margin: 0 auto;
+    }
+
+    .portada-grid {
+        align-items: start;
+    }
+
+    #visor3DPortada {
+        min-height: 400px;
+    }
+
+    #visor3DVariables {
+        min-height: 400px;
+    }
+
+    #visor3DCelula {
+        min-height: 420px;
+    }
+}
+
+@media (max-width: 640px) {
+    .brand-sub,
+    .growth-text {
+        display: none;
+    }
+
+    .nav-arrow {
+        width: 50px;
+        height: 50px;
+        font-size: 30px;
+    }
+
+    .nav-arrow.prev { left: 8px; }
+    .nav-arrow.next { right: 8px; }
+
+    .bottle-row {
+        grid-template-columns: 1fr;
+    }
+
+    .dots {
+        gap: 5px;
+        padding: 7px 10px;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   22. IMPRESIÓN (exportar a PDF)
+--------------------------------------------------------------------------- */
+@media print {
+    body {
+        overflow: visible;
+        background: #fff !important;
+        color: #10241a !important;
+    }
+
+    #bgCanvas, .glow, .topbar, .bottombar, .nav-arrow, .exit-focus, .toast {
+        display: none !important;
+    }
+
+    .slide-viewport {
+        position: static !important;
+        overflow: visible !important;
+    }
+
+    .slide-container {
+        display: block !important;
+        transform: none !important;
+    }
+
+    .slide {
+        height: auto !important;
+        min-height: 100vh;
+        page-break-after: always;
+        overflow: visible !important;
+    }
+
+    .slide .stagger {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   23. ACCESIBILIDAD: reducir movimiento
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    .slide-container,
+    .slide .stagger,
+    .nav-arrow,
+    .fb-sway,
+    .fb-grow,
+    .fb-drop,
+    .fb-pulse,
+    .fb-float {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+    }
+}
